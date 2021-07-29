@@ -1,14 +1,38 @@
 # This config is equivalent to both the '.circleci/extended/orb-free.yml' and the base '.circleci/config.yml'
 version: 2.1
 
-orbs:
-  node: circleci/node@4.1
+jobs:
+  build:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - run: npm i
+      - run: npm run lint
 
+  test:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - run: npm i
+      - run: npm run test
+
+  analyze:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - run: npm audit
 workflows:
   sample:
     jobs:
-      - node/test:
-          version: '15.1'
-          # This is the node version to use for the `cimg/node` tag
-          # Relevant tags can be found on the CircleCI Developer Hub
-          # https://circleci.com/developer/images/image/cimg/node
+      - build
+      - test:
+          requeires:
+            - build
+      - analyze:
+          requeires:
+            - test
+
+
