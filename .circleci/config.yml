@@ -29,10 +29,10 @@ workflows:
     jobs:
       - build
       - test:
-          requeires:
+          requires:
             - build
       - analyze:
-          requeires:
+          requires:
             - test
 
 
